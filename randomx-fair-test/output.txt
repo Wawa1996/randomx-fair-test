@@ -1,0 +1,10 @@
+sha256
+dificutty = 1  2 0 0 1 0 0 1 0 0 0 aver = 0
+dificutty = 2  1 1 2 0 1 0 0 0 0 0 aver = 0
+dificutty = 3  1 0 2 1 1 4 0 1 0 3 aver = 1
+dificutty = 4  4 7 3 1 1 4 9 0 3 0 aver = 3
+dificutty = 5  1 11 14 24 8 12 4 1 18 2 aver = 9
+dificutty = 6  69 3 55 37 12 95 21 52 36 0 aver = 38
+dificutty = 7  235 5 43 188 240 48 107 354 573 127 aver = 192
+dificutty = 8  145 45 175 321 1113 1898 127 318 89 54 aver = 428
+dificutty = 9  1985 1783 658 138 42 4053 1973 1779 656 138 aver = 1320

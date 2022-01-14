@@ -1,75 +1,127 @@
 package io.virgo.randomX;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 public class Main {
-    public static void main(String[] args) {
-        int count = 0;
-        RandomX.Builder build = new RandomX.Builder();
-        build.fastInit(true);
-        build.flag(RandomX.Flag.DEFAULT);
-        long startTime = System.currentTimeMillis();
-        RandomX randomX = build.build();
-        Random random = new Random();
-        random.nextInt();
-        byte[] bytes = new byte[]{(byte) random.nextInt(), (byte) random.nextInt(),(byte) random.nextInt(),
-                (byte) random.nextInt(),(byte) random.nextInt(), (byte) random.nextInt()};
-        randomX.init(bytes);
-        RandomX_VM vm = randomX.createVM();
-        byte[] hash = vm.getHash(bytes);
-        while(true){
-            if(isValidHashDifficulty(byte2Hex(hash))){
-                System.out.println(count);
-                long end = System.currentTimeMillis();
-                System.out.println((end-startTime)+" ms");
-                return;
-            }
-            count++;
-            nextbyte(bytes);
-            hash = vm.getHash(bytes);
-        }
+    private static int dificutty = 1;
+
+    public static void main(String[] args) throws IOException {
+        Main main = new Main();
+        main.Hashcal();
+        main.Randomxcal();
+
     }
-    //00000048bfdc5e67aa448686438f1350a6cc7f4477feb5562b0368a808fdef57
-    private static boolean isValidHashDifficulty(String hash) {
-        //定义难度系数
-        int dificutty = 1;
-        //定义标志符0(当然也可以定义其他，一般是0)
-        char zero = '0';
+
+    private void Hashcal() throws IOException {
+        File writename = new File("output.txt");
+        writename.createNewFile(); // 创建新文件
+        BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+        long [] time = new long[10];
+        Random random = new Random();
+        byte[] bytes;
+        byte[] hashbytes;
+        out.write("sha256\r\n");
+        for(int j=1;j<10;j++){
+            dificutty  = j;
+            out.write("dificutty = "+ j+"  ");
+            a:for(int i=0;i<10;i++){
+                long starttime = System.currentTimeMillis();
+                while (true) {
+                    bytes = new byte[]{(byte) random.nextInt(), (byte) random.nextInt(), (byte) random.nextInt(),
+                            (byte) random.nextInt(), (byte) random.nextInt(), (byte) random.nextInt()};
+                    hashbytes = Sha256.hash(bytes);
+                    if (isValidHashDifficulty(byte2Hex(hashbytes))) {
+                        long end = System.currentTimeMillis();
+                        time[i] = (end - starttime);
+                        out.write(String.valueOf(time[i]));
+                        out.write(" ");
+                        System.out.println(time[i]);
+                        continue a;
+                    }
+                }
+            }
+            long aver = 0;
+            for (long l : time) {
+                aver += l;
+            }
+            System.out.println("平均值 " + aver / 10);
+            out.write("aver = "+ aver / 10 +"\r\n");
+        }
+        out.flush();
+        out.close();
+    }
+
+    private void Randomxcal() throws IOException {
+        Random random = new Random();
+        byte[] bytes;
+        File writename = new File("output1.txt");
+        writename.createNewFile();
+        BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+        out.write("randomx \r\n");
+        for(int k = 1;k<=4;k++){
+            dificutty = k;
+            out.write("dificutty = "+ k+"  ");
+            long[] arr = new long[10];
+            a:for (int i = 0; i < 10; i++) {
+                RandomX.Builder build = new RandomX.Builder();
+                build.fastInit(true);
+                build.flag(RandomX.Flag.DEFAULT);
+                long startTime = System.currentTimeMillis();
+                RandomX randomX = build.build();
+                while (true) {
+                    bytes = new byte[]{(byte) random.nextInt(), (byte) random.nextInt(), (byte) random.nextInt(),
+                            (byte) random.nextInt(), (byte) random.nextInt(), (byte) random.nextInt()};
+                    randomX.init(bytes);
+                    RandomX_VM vm = randomX.createVM();
+                    byte[] hash = vm.getHash(bytes);
+                    if (isValidHashDifficulty(byte2Hex(hash))) {
+                        long end = System.currentTimeMillis();
+                        arr[i] = (end - startTime);
+                        System.out.println(arr[i]);
+                        out.write(String.valueOf(arr[i]));
+                        out.write(" ");
+                        continue a;
+                    }
+                }
+            }
+            long aver = 0;
+            for (long l : arr) {
+                aver += l;
+            }
+            System.out.println("平均值 " + aver / 10);
+            out.write("aver = "+ aver / 10 +"\r\n");
+        }
+        out.flush();
+        out.close();
+    }
+
+    private static boolean isValidHashDifficulty (String hash){
         int i;
         for (i = 0; i < hash.length(); i++) {
-            //获得hash字符串的i位置的字符
             char ichar = hash.charAt(i);
-            //如果i处的值不为0则跳出
-            if (ichar != zero) {
+            if (ichar != '0' && ichar != '1' && ichar != '2') {
                 break;
             }
         }
         //判断i是否大于等于难度系数，返回即可
         return i >= dificutty;
     }
-    private static String byte2Hex(byte[] bytes) {
+    private static String byte2Hex(byte[] bytes){
         StringBuffer stringBuffer = new StringBuffer();
-        String temp = null;
+        String temp;
         for (int i = 0; i < bytes.length; i++) {
             temp = Integer.toHexString(bytes[i] & 0xFF);
             if (temp.length() == 1) {
-            // 1得到一位的进行补0操作
-            stringBuffer.append("0");
+                // 1得到一位的进行补0操作
+                stringBuffer.append("0");
             }
-        stringBuffer.append(temp);
+            stringBuffer.append(temp);
         }
         return stringBuffer.toString();
-    }
-
-    private static boolean nextbyte(byte[]bytes){
-        int len = bytes.length;
-        for(int i=0;i<len;i++){
-            if(bytes[i] + 128 != 255){
-                bytes[i]++;
-                return true;
-            }
-        }
-        return false;
     }
 }

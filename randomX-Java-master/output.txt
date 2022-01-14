@@ -1,9 +1,0 @@
-dificutty = 11 1 0 0 1 0 0 1 1 0 aver = 0
-dificutty = 21 2 0 1 0 0 0 0 0 0 aver = 0
-dificutty = 31 1 1 1 0 1 1 0 0 0 aver = 0
-dificutty = 44 11 1 0 2 3 1 5 3 12 aver = 4
-dificutty = 522 3 8 3 7 4 6 7 7 3 aver = 7
-dificutty = 641 2 14 20 87 33 10 32 1 4 aver = 24
-dificutty = 753 43 44 110 3 15 99 283 7 9 aver = 66
-dificutty = 89 1197 1937 104 312 87 53 579 550 20 aver = 484
-dificutty = 9827 1766 652 138 43 4001 1970 1764 653 137 aver = 1195
